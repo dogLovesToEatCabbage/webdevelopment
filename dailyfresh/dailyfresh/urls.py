@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from df_goods import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("user/", include('df_user.urls')),
-    path('index/', include('df_user.urls')),
+    path('index/', views.index),
+    path('tinymce/', include('tinymce.urls')),
+    path('goods/',include('df_goods.urls')),
 ]

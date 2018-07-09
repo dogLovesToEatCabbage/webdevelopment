@@ -91,15 +91,18 @@ def login_handle(request):
 def info(request):
     """用户中心页面"""
     uname = request.COOKIES.get('uname')
-    uemail = UserInfo.objects.filter(uname=uname)[0].uemail
-    uphone = ''
-    # uaddress = ''
-    context = {'title': '用户中心', 'uname': uname, 'uemail': uemail, 'uphone': uphone}
-    return render(request, 'df_user/user_center_info.html', context)
+    if uname:
+        uemail = UserInfo.objects.filter(uname=uname)[0].uemail
+        uphone = ''
+        # uaddress = ''
+        context = {'title': '用户中心', 'uname': uname, 'uemail': uemail, 'uphone': uphone, 'page_name': 1, 'guest_cart': 0}
+        return render(request, 'df_user/user_center_info.html', context)
+    else:
+        return redirect('/user/login/')
 
 def order(request):
     """订单页面"""
-    context = {'title': '用户中心'}
+    context = {'title': '用户中心', 'page_name': 1, 'guest_cart': 0}
     return render(request, 'df_user/user_center_order.html', context)
 
 def site(request):
@@ -113,7 +116,7 @@ def site(request):
         user.uphone = post.get('uphone')
         user.save()
 
-    context = {'title': '用户中心', 'user': user}
+    context = {'title': '用户中心', 'user': user, 'page_name': 1, 'guest_cart': 0}
 
     return render(request, 'df_user/user_center_site.html', context)
 
