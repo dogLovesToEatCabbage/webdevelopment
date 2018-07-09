@@ -39,7 +39,7 @@ def index(request):
 
 def list(request, tid, pindex, sort):  # get方法传过来的参数都是str类型
     type = TypeInfo.objects.get(id=tid)  # 用get得到唯一的一个
-    goods_new = type.goodsinfo_set.order_by('-id')[0: 2]
+    goods_new = type.goodsinfo_set.order_by('-id')[0: 2]  # 最新推荐2个
 
     if int(sort) == 1:  # 默认排序最新
         goods_sort = type.goodsinfo_set.order_by('-id')
@@ -49,6 +49,10 @@ def list(request, tid, pindex, sort):  # get方法传过来的参数都是str类
         goods_sort = type.goodsinfo_set.order_by('-gclick')
     else:
         raise Http404
+    print(goods_sort)
+    print(goods_sort[0].gclick)
+    print(goods_sort[1].gclick)
+    print(goods_sort[2].gclick)
 
     pagina = paginator.Paginator(goods_sort, 8)  # 每页放8个
     page = pagina.page(int(pindex))
@@ -69,7 +73,7 @@ def list(request, tid, pindex, sort):  # get方法传过来的参数都是str类
 
     context = {'title': '商品列表', 'page_name': 0, 'guest_cart': 1,
                'goods_new': goods_new, 'type': type, 'page': page,
-               'tid': tid, 'pindex': pindex, 'sort': sort,
+               'tid': tid, 'pindex': pindex, 'sort': int(sort),
                'front_page': front_page, 'behind_page': behind_page
                # 'behind_page': page.next_page_number(), 'front_page': page.previous_page_number()
                }
@@ -79,7 +83,10 @@ def list(request, tid, pindex, sort):  # get方法传过来的参数都是str类
 
 def detail(request, gid):
     goods = GoodsInfo.objects.get(pk=gid)
+    goods.gclick = goods.gclick + 1
+    goods.save()  # 记住要save()，这样点击量增加才会写入到数据库中
     gtype = goods.gtype
+
     # type = TypeInfo.objects.filter(ttitle=gtype)
     # goods_adv = type[0].goodsinfo_set.order_by('-id')[0: 2]
     # 两种方法都可以获取到最新的的前两个商品

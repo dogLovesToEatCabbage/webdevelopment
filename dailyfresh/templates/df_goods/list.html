@@ -49,9 +49,19 @@
 
 		<div class="r_wrap fr clearfix">
 			<div class="sort_bar">
+				{% if sort == 1 %}
 				<a href="/goods/list{{tid}}_{{pindex}}_1/" class="active">默认</a>
 				<a href="/goods/list{{tid}}_{{pindex}}_2/">价格</a>
 				<a href="/goods/list{{tid}}_{{pindex}}_3/">人气</a>
+				{% elif sort == 2 %}
+				<a href="/goods/list{{tid}}_{{pindex}}_1/">默认</a>
+				<a href="/goods/list{{tid}}_{{pindex}}_2/" class="active">价格</a>
+				<a href="/goods/list{{tid}}_{{pindex}}_3/">人气</a>
+				{% elif sort == 3 %}
+				<a href="/goods/list{{tid}}_{{pindex}}_1/">默认</a>
+				<a href="/goods/list{{tid}}_{{pindex}}_2/">价格</a>
+				<a href="/goods/list{{tid}}_{{pindex}}_3/" class="active">人气</a>
+				{% endif %}
 			</div>
 
 			<ul class="goods_type_list clearfix">
@@ -71,7 +81,7 @@
 			<div class="pagenation">
 				<a href="/goods/list{{tid}}_{{front_page}}_{{sort}}"><上一页</a>
 				{% for index in page.paginator.page_range %}
-					{%if index == page.number %}
+					{% if index == page.number %}
 						<a class="active">{{index}}</a>
 					{% else %}
 						<a href="/goods/list{{tid}}_{{index}}_{{sort}}">{{index}}</a>
