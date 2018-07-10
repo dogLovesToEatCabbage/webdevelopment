@@ -94,4 +94,23 @@ def detail(request, gid):
     context = {'title': '商品详情', 'page_name': 0,
                'guest_cart': 1, 'goods': goods,
                'gtype': gtype, 'goods_new': goods_new}
-    return render(request, 'df_goods/detail.html', context)
+    response = render(request, 'df_goods/detail.html', context)
+    # 在访问detail页面的时候把访问的商品信息添加到cookie中
+    # 最近浏览，将最近看过的5件商品展示出来
+    # 由于最近浏览不为私密信息，因此将最近浏览的信息放在cookie，没必要放在session
+
+    goods_ids = request.COOKIES.get('goods_ids', '') # goods_ids是字符串（例：'23,4,5,12,22'），默认值为''
+    goods_id = '%d' % goods.id
+    if goods_ids != '': # 判断是否有浏览记录
+        goods_ids1 = goods_ids.split(',')  # 字符串拆分成列表
+        if goods_ids1.count(goods_id) >= 1:  # 判断goods_id在列表中是否已存在
+            goods_ids1.remove(goods_id)  # 若之前存在，删除
+        goods_ids1.insert(0, goods_id)  # 将其插入到第一个的位置
+        if len(goods_ids1) >= 6:  # 只要前五个记录
+            del goods_ids1[5]
+        goods_ids = ','.join(goods_ids1)
+    else:
+        goods_ids = goods_id
+
+    response.set_cookie('goods_ids', goods_ids)
+    return response
