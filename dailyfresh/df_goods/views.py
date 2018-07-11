@@ -2,6 +2,7 @@ from django.shortcuts import render
 from . models import *
 from django.core import paginator
 from django.http import Http404
+from df_cart.models import *
 
 
 def index(request):
@@ -26,6 +27,11 @@ def index(request):
 
     # 两种获取商品的方式都可以
     # type_0_g = GoodsInfo.objects.filter(gtype=types[0]).order_by('-id')[0:4]
+    # 购物车中商品种类
+    if request.session.has_key('user_id'):
+        count = CartInfo.objects.filter(user_id=request.session['user_id']).count()
+    else:
+        count = 0
     context = {'title': '首页', 'page_name': 0, 'guest_cart': 1,
                'type0': types[0], "type_0_g": type_0_g, 'type_0_gc': type_0_gc,
                'type1': types[1], "type_1_g": type_1_g, 'type_1_gc': type_1_gc,
@@ -33,6 +39,7 @@ def index(request):
                'type3': types[3], "type_3_g": type_3_g, 'type_3_gc': type_3_gc,
                'type4': types[4], "type_4_g": type_4_g, 'type_4_gc': type_4_gc,
                'type5': types[5], "type_5_g": type_5_g, 'type_5_gc': type_5_gc,
+               'count': count
                }
     return render(request, 'df_goods/index.html', context)
 
@@ -49,11 +56,6 @@ def list(request, tid, pindex, sort):  # get方法传过来的参数都是str类
         goods_sort = type.goodsinfo_set.order_by('-gclick')
     else:
         raise Http404
-    print(goods_sort)
-    print(goods_sort[0].gclick)
-    print(goods_sort[1].gclick)
-    print(goods_sort[2].gclick)
-
     pagina = paginator.Paginator(goods_sort, 8)  # 每页放8个
     page = pagina.page(int(pindex))
 
@@ -70,12 +72,17 @@ def list(request, tid, pindex, sort):  # get方法传过来的参数都是str类
         raise Http404
     else:
         behind_page = int(pindex)
-
+    # 购物车中商品种类
+    if request.session.has_key('user_id'):
+        count = CartInfo.objects.filter(user_id=request.session['user_id']).count()
+    else:
+        count = 0
     context = {'title': '商品列表', 'page_name': 0, 'guest_cart': 1,
                'goods_new': goods_new, 'type': type, 'page': page,
                'tid': tid, 'pindex': pindex, 'sort': int(sort),
-               'front_page': front_page, 'behind_page': behind_page
+               'front_page': front_page, 'behind_page': behind_page,
                # 'behind_page': page.next_page_number(), 'front_page': page.previous_page_number()
+               'count': count
                }
     # print(goods_sort)
     return render(request, 'df_goods/list.html', context)
@@ -91,9 +98,16 @@ def detail(request, gid):
     # goods_adv = type[0].goodsinfo_set.order_by('-id')[0: 2]
     # 两种方法都可以获取到最新的的前两个商品
     goods_new = gtype.goodsinfo_set.order_by('-id')[0: 2]
+    # 购物车中商品种类
+    if request.session.has_key('user_id'):
+        count = CartInfo.objects.filter(user_id=request.session['user_id']).count()
+    else:
+        count = 0
     context = {'title': '商品详情', 'page_name': 0,
                'guest_cart': 1, 'goods': goods,
-               'gtype': gtype, 'goods_new': goods_new}
+               'gtype': gtype, 'goods_new': goods_new,
+               'count': count
+               }
     response = render(request, 'df_goods/detail.html', context)
     # 在访问detail页面的时候把访问的商品信息添加到cookie中
     # 最近浏览，将最近看过的5件商品展示出来

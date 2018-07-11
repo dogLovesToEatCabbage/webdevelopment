@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'df_goods/base.html' %}
 {% block b1 %}
 <script>
 	function add(){
@@ -7,7 +7,10 @@
 	    $('.num_show').blur();
 	}
 	function minus(){
-	    num = parsefloAT($('.num_show').val());
+	    num = parseFloat($('.num_show').val());
+	    if (num <=1){
+	        return;
+		}
 	    $('.num_show').val(num-1);
 		$('.num_show').blur();
 	}
@@ -15,9 +18,13 @@
 	$(function () {
 		$('.num_show').blur(function () {
 			num = parseFloat(($('.num_show').val()));
-			price = parseFloat($('#gprice').text());
+			if (num <= 1){
+			    num = 1;
+			}
+			price = parseFloat(($('#gprice').text()));
 			total = num * price;
 			$('#gtotal').text(total.toFixed(2) + '元');
+			$('.add_cart').attr('href', '/cart/add' + $('#gid').val() + '_' + $('.num_show').val() + '/');
         });
     });
 </script>
@@ -66,14 +73,14 @@
 				<div class="num_name fl">数 量：</div>
 				<div class="num_add fl">
 					<input type="text" class="num_show fl" value="1">
-					<a href="javascript: add();" class="add fr">+</a>
-					<a href="javascript: minus();" class="minus fr">-</a>
+					<a href="javascript:add();" class="add fr">+</a>
+					<a href="javascript:minus();" class="minus fr">-</a>
 				</div> 
 			</div>
-			<div class="total">总价：<em id="gtotal">{{goods.gprice}}元</em></div>
+			<div class="total" id="gid" value="{{goods.id}}">总价：<em id="gtotal">{{goods.gprice}}</em></div>
 			<div class="operate_btn">
-				<a href="javascript: add();" class="buy_btn">立即购买</a>
-				<a href="javascript: minus();" class="add_cart" id="add_cart">加入购物车</a>
+				<a href="javascript:;" class="buy_btn">立即购买</a>
+				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>
 			</div>
 		</div>
 	</div>
@@ -125,6 +132,13 @@
 
 		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
 		$('#add_cart').click(function(){
+		    // 判断是否登录，若未登录，提示先登录
+			if ($('.login_btn').text().indexOf('登录')>=0){
+			    alert('请先登录后再购买');
+			    location.href = '/user/login/';
+			    return;
+			}
+			// 加入购物车动画
 			$(".add_jump").stop().animate({
 				'left': $to_y+7,
 				'top': $to_x+7},
@@ -132,6 +146,12 @@
 					$(".add_jump").fadeOut('fast',function(){
 						$('#show_count').html(2);
 					});
+			// 异步
+			num = parseInt($('.num_show').val());
+			$.get('/cart/add{{goods.id}}_' + num + '/', function (data) {
+			    $('#show_count').text(data.count);
+
+            })
 
 			});
 		})

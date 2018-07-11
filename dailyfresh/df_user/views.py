@@ -66,7 +66,7 @@ def login_handle(request):
 
     # 根据用户名查询对象
     users = UserInfo.objects.filter(uname=uname) #查询集是个列表[]
-    print(uname)
+    # print(uname)
 
     if len(users)==1:
          # 密码加密

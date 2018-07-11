@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'df_goods/base.html' %}
 {% block b1 %}
 
 	<div class="navbar_con">
@@ -72,7 +72,7 @@
 					<div class="operate">
 						<span class="prize">￥{{good.gprice}}</span>
 						<span class="unit">{{good.gprice}}/{{good.gunit}}</span>
-						<a href="#" class="add_goods" title="加入购物车"></a>
+						<a href="/cart/add{{good.id}}_1/" class="add_goods" title="加入购物车"></a>
 					</div>
 				</li>
 				{% endfor %}
