@@ -9,3 +9,4 @@ class UserInfo(models.Model):
     uaddress = models.CharField(max_length=100, default='')
     upostcode = models.CharField(max_length=6,default='')
     urecipients = models.CharField(max_length=20,default='')
+

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
@@ -8,7 +8,7 @@ urlpatterns = [
     path('login/', views.login),
     path('login_handle/', views.login_handle),
     path('info/', views.info),
-    path('order/', views.order),
+    re_path('order(\d*)/', views.order),
     path('site/', views.site),
     path('logout/', views.logout),
 ]

@@ -5,7 +5,7 @@ from df_user.models import *
 from hashlib import sha1
 from . import user_decorator
 from df_goods.models import *
-
+from df_order.models import *
 
 def register(request):
     """注册页面"""
@@ -115,7 +115,7 @@ def info(request):
         context = {'title': '用户中心', 'uname': uname,
                    'uemail': uemail, 'uphone': uphone,
                    'page_name': 1, 'guest_cart': 0,
-                   'goods_list': goods_list
+                   'goods_list': goods_list, 'title2': '用户中心'
                    }
         return render(request, 'df_user/user_center_info.html', context)
     else:
@@ -123,9 +123,18 @@ def info(request):
 
 
 @user_decorator.login
-def order(request):
-    """订单页面"""
-    context = {'title': '用户中心', 'page_name': 1, 'guest_cart': 0}
+def order(request, orderid):
+    """已经提交的订单页面"""
+    # 创建订单对象
+    orderinfo = OrderInfo.objects.all()  # 获取所有订单
+    print(orderinfo)
+    orderdetailinfo = OrderDetailInfo.objects.all()  # 获取详单
+
+    context = {'title': '用户中心', 'title2': '用户中心',
+               'page_name': 1, 'guest_cart': 0,
+               'orderinfo': orderinfo, 'orderdetailinfo': orderdetailinfo,
+
+               }
     return render(request, 'df_user/user_center_order.html', context)
 
 
@@ -141,7 +150,7 @@ def site(request):
         user.uphone = post.get('uphone')
         user.save()
 
-    context = {'title': '用户中心', 'user': user, 'page_name': 1, 'guest_cart': 0}
+    context = {'title': '用户中心', 'title2': '用户中心', 'user': user, 'page_name': 1, 'guest_cart': 0}
 
     return render(request, 'df_user/user_center_site.html', context)
 
