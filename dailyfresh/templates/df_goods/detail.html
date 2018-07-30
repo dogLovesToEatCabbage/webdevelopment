@@ -17,11 +17,11 @@
 	
 	$(function () {
 		$('.num_show').blur(function () {
-			num = parseFloat(($('.num_show').val()));
+			num = parseFloat($('.num_show').val());
 			if (num <= 1){
 			    num = 1;
 			}
-			price = parseFloat(($('#gprice').text()));
+			price = parseFloat($('#gprice').text());
 			total = num * price;
 			$('#gtotal').text(total.toFixed(2) + '元');
 			$('.add_cart').attr('href', '/cart/add' + $('#gid').val() + '_' + $('.num_show').val() + '/');
@@ -75,8 +75,11 @@
 					<input type="text" class="num_show fl" value="1">
 					<a href="javascript:add();" class="add fr">+</a>
 					<a href="javascript:minus();" class="minus fr">-</a>
-				</div> 
-			</div>
+				</div>
+			</div><br>
+            <div style="color:red">
+                <b>库存: {{ kucun }}</b>
+            </div>
 			<div class="total" id="gid" value="{{goods.id}}">总价：<em id="gtotal">{{goods.gprice}}</em></div>
 			<div class="operate_btn">
 				<a href="javascript:;" class="buy_btn">立即购买</a>

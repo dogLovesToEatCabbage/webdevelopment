@@ -110,7 +110,8 @@ def info(request):
     uname = request.COOKIES.get('uname')
     if uname:
         uemail = UserInfo.objects.filter(uname=uname)[0].uemail
-        uphone = ''
+        uphone = UserInfo.objects.get(uname=uname).uphone
+        uphone = uphone[:3] + '****' + uphone[-4:]
         # uaddress = ''
         context = {'title': '用户中心', 'uname': uname,
                    'uemail': uemail, 'uphone': uphone,
@@ -127,7 +128,6 @@ def order(request, orderid):
     """已经提交的订单页面"""
     # 创建订单对象
     orderinfo = OrderInfo.objects.all()  # 获取所有订单
-    print(orderinfo)
     orderdetailinfo = OrderDetailInfo.objects.all()  # 获取详单
 
     context = {'title': '用户中心', 'title2': '用户中心',

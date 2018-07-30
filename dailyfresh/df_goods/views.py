@@ -29,9 +29,9 @@ def index(request):
     # type_0_g = GoodsInfo.objects.filter(gtype=types[0]).order_by('-id')[0:4]
     # 购物车中商品种类
     if request.session.has_key('user_id'):
-        count = CartInfo.objects.filter(user_id=request.session['user_id']).count()
+        cart_count = CartInfo.objects.filter(user_id=request.session['user_id']).count()
     else:
-        count = 0
+        cart_count = 0
     context = {'title': '首页', 'page_name': 0, 'guest_cart': 1,
                'type0': types[0], "type_0_g": type_0_g, 'type_0_gc': type_0_gc,
                'type1': types[1], "type_1_g": type_1_g, 'type_1_gc': type_1_gc,
@@ -39,7 +39,7 @@ def index(request):
                'type3': types[3], "type_3_g": type_3_g, 'type_3_gc': type_3_gc,
                'type4': types[4], "type_4_g": type_4_g, 'type_4_gc': type_4_gc,
                'type5': types[5], "type_5_g": type_5_g, 'type_5_gc': type_5_gc,
-               'count': count
+               'cart_count': cart_count
                }
     return render(request, 'df_goods/index.html', context)
 
@@ -74,15 +74,22 @@ def list(request, tid, pindex, sort):  # get方法传过来的参数都是str类
         behind_page = int(pindex)
     # 购物车中商品种类
     if request.session.has_key('user_id'):
-        count = CartInfo.objects.filter(user_id=request.session['user_id']).count()
+        cart_count = CartInfo.objects.filter(user_id=request.session['user_id']).count()
     else:
-        count = 0
-    context = {'title': '商品列表', 'page_name': 0, 'guest_cart': 1,
-               'goods_new': goods_new, 'type': type, 'page': page,
-               'tid': tid, 'pindex': pindex, 'sort': int(sort),
-               'front_page': front_page, 'behind_page': behind_page,
+        cart_count = 0
+    context = {'title': '商品列表',
+               'page_name': 0,
+               'guest_cart': 1,
+               'goods_new': goods_new,
+               'type': type,
+               'page': page,
+               'tid': tid,
+               'pindex': pindex,
+               'sort': int(sort),
+               'front_page': front_page,
+               'behind_page': behind_page,
                # 'behind_page': page.next_page_number(), 'front_page': page.previous_page_number()
-               'count': count
+               'cart_count': cart_count
                }
     # print(goods_sort)
     return render(request, 'df_goods/list.html', context)
@@ -90,6 +97,7 @@ def list(request, tid, pindex, sort):  # get方法传过来的参数都是str类
 
 def detail(request, gid):
     goods = GoodsInfo.objects.get(pk=gid)
+    kucun = goods.gkucun
     goods.gclick = goods.gclick + 1
     goods.save()  # 记住要save()，这样点击量增加才会写入到数据库中
     gtype = goods.gtype
@@ -100,13 +108,17 @@ def detail(request, gid):
     goods_new = gtype.goodsinfo_set.order_by('-id')[0: 2]
     # 购物车中商品种类
     if request.session.has_key('user_id'):
-        count = CartInfo.objects.filter(user_id=request.session['user_id']).count()
+        cart_count = CartInfo.objects.filter(user_id=request.session['user_id']).count()
     else:
-        count = 0
-    context = {'title': '商品详情', 'page_name': 0,
-               'guest_cart': 1, 'goods': goods,
-               'gtype': gtype, 'goods_new': goods_new,
-               'count': count
+        cart_count = 0
+    context = {'title': '商品详情',
+               'page_name': 0,
+               'guest_cart': 1,
+               'goods': goods,
+               'gtype': gtype,
+               'goods_new': goods_new,
+               'cart_count': cart_count,
+               'kucun': kucun
                }
     response = render(request, 'df_goods/detail.html', context)
     # 在访问detail页面的时候把访问的商品信息添加到cookie中
@@ -128,3 +140,27 @@ def detail(request, gid):
 
     response.set_cookie('goods_ids', goods_ids)
     return response
+
+# 购物车数量
+def cart_count(request):
+    if request.session.has_key('user_id'):
+        return CartInfo.objects.filter(user_id=request.session.get('user_id')).count()
+    else:
+        return 0
+
+from haystack.views import SearchView
+
+
+class MySearchView(SearchView):
+
+    def extra_context(self):
+        # 这里context是一个空字典
+        context = super().extra_context()
+        # 给context（上下文）添加键值
+        context['title'] = '搜索'
+        context['page_name'] = 0
+        context['guest_cart'] = 1
+        context['cart_count'] = cart_count(self.request)
+
+
+        return context

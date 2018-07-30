@@ -60,7 +60,6 @@ def order_handle(request):
 
         # 2、判断已提交的购物车中商品的库存
         cart_ids = request.POST.getlist('cart_ids[]')  # ajax传递过来的,注意是如何取出数据的
-        print(cart_ids)
         for cart_id in cart_ids:
             cartinfo = CartInfo.objects.get(id=cart_id)
             goodsinfo = GoodsInfo.objects.get(id=cartinfo.goods_id)
@@ -70,7 +69,6 @@ def order_handle(request):
                # 创建详单对象，向数据库中写入数据
                 orderdetailinfo = OrderDetailInfo()
                 orderdetailinfo.price = goodsinfo.gprice
-                print(orderdetailinfo.price)
                 orderdetailinfo.count = int(cartinfo.count)
                 orderdetailinfo.goods_id = int(goodsinfo.id)
                 orderdetailinfo.order_id = int(orderinfo.oid)

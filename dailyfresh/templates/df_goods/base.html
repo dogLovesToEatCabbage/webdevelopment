@@ -43,14 +43,14 @@
 {% if page_name == 1 %}
 		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>
 {% endif %}
-		<div class="search_con fl">
-			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
-			<input type="button" class="input_btn fr" name="" value="搜索">
-		</div>
+		<form class="search_con fl" method="get" action="/goods/search/" target="_blank">
+			<input type="text" class="input_text fl" name="q" placeholder="搜索商品">
+			<input type="submit" class="input_btn fr" name="" value="搜索">
+		</form>
 {% if guest_cart == 1 %}
 		<div class="guest_cart fr">
 			<a href="/cart/" class="cart_name fl">我的购物车</a>
-			<div class="goods_count fl" id="show_count">{{count}}</div>
+			<div class="goods_count fl" id="show_count">{{cart_count}}</div>
 		</div>
 	</div>
 {% endif %}

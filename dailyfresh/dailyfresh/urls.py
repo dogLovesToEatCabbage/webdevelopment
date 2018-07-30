@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from df_goods import views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("user/", include('df_user.urls')),
@@ -25,4 +26,6 @@ urlpatterns = [
     path('goods/', include('df_goods.urls')),
     path('cart/', include('df_cart.urls')),
     path('order/', include('df_order.urls')),
+    # path('search/', include('haystack.urls')),
+
 ]

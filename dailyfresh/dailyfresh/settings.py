@@ -25,7 +25,10 @@ SECRET_KEY = 'g6^((l*husa%-k!(++bd#7p05#l&1m&nsdzwp2=*p4882i-wj1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    # '127.0.0.2',
+    # 'localhost'
+]
 
 
 # Application definition
@@ -42,6 +45,7 @@ INSTALLED_APPS = [
     'tinymce',
     'df_cart',
     'df_order',
+    'haystack',
 ]
 
 MIDDLEWARE = [
@@ -133,10 +137,22 @@ STATICFILES_DIRS = [
 # 上传文件在开发阶段的路径
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/df_goods')
 # 上传文件在部署阶段的路径
-# MEDIA_ROOT = '/var/wwww/dailyfresh/static/media/df_goods'
+# MEDIA_ROOT = '/var/wwww/dailyfresh/static/media/dailyfresh'
 
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
     'width': 600,
     'height': 400,
 }
+# 添加whoosh搜索引擎
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshEngine',
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    }
+}
+
+# 当添加修改删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+# HAYSTACK_DEFAULT_OPERATOR = 'OR'
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 18
